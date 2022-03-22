@@ -44,10 +44,10 @@ public class WorkersController {
     }
 
     @PostMapping
-    public ResponseEntity createAWorker(@RequestBody WorkerViewModel workerViewModel){
-        System.out.println("create a new Worker" + workerViewModel);
+    public ResponseEntity createAWorker(@RequestBody WorkerEntity workerEntity){
+        System.out.println("create a new Worker" + workerEntity);
         // save info into database
-        WorkerEntity newWorkerEntity = this.workerService.create(workerViewModel);
+        WorkerEntity newWorkerEntity = this.workerService.create(workerEntity);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

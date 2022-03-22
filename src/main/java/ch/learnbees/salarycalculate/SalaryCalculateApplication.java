@@ -21,30 +21,45 @@ public class SalaryCalculateApplication {
 		WorkingHoursRepository workingHoursRepository = configurableApplicationContext.getBean(WorkingHoursRepository.class);
 		WorkerRepository workerRepository = configurableApplicationContext.getBean(WorkerRepository.class);
 
-		WorkerEntity worker1 = new WorkerEntity("Umut" , "Dev", "Good");
+		WorkingHoursEntity workingHoursOfWorker1= new WorkingHoursEntity( 3.0 , 60.0 );
+		WorkerEntity worker1 = new WorkerEntity("Umut" , "Dev", "Good" , workingHoursOfWorker1);
 		workerRepository.save(worker1);
-		/*
-		WorkerEntity worker2 = new WorkerEntity("James" , "QA", "Disabled");
-		WorkerEntity worker3 = new WorkerEntity("Marco" , "SQL", "Lazy");
+		workingHoursOfWorker1.setWorkerEntity(worker1);
+		workingHoursRepository.save(workingHoursOfWorker1);
 
+		WorkingHoursEntity workingHoursOfWorker2= new WorkingHoursEntity( 2.0 , 90.0);
+		WorkerEntity worker2 = new WorkerEntity("James" , "QA", "Disabled" , workingHoursOfWorker2);
+		workerRepository.save(worker2);
+		workingHoursOfWorker2.setWorkerEntity(worker2);
+		workingHoursRepository.save(workingHoursOfWorker2);
+
+		WorkingHoursEntity workingHoursOfWorker3= new WorkingHoursEntity( 7.0 , 120.0);
+		WorkerEntity worker3 = new WorkerEntity("Marco" , "SQL", "Lazy",workingHoursOfWorker3);
+		workerRepository.save(worker3);
+		workingHoursOfWorker3.setWorkerEntity(worker3);
+		workingHoursRepository.save(workingHoursOfWorker3);
+
+		/*
+		WorkingHoursEntity workingHoursOfWorker1= new WorkingHoursEntity( 3.0 , 60.0 );
+		WorkingHoursEntity workingHoursOfWorker2= new WorkingHoursEntity( 2.0 , 90.0);
+		WorkingHoursEntity workingHoursOfWorker3= new WorkingHoursEntity( 7.0 , 120.0);
+
+		WorkerEntity worker1 = new WorkerEntity("Umut" , "Dev", "Good" , workingHoursOfWorker1);
+		WorkerEntity worker2 = new WorkerEntity("James" , "QA", "Disabled" , workingHoursOfWorker2);
+		WorkerEntity worker3 = new WorkerEntity("Marco" , "SQL", "Lazy",workingHoursOfWorker3);
+
+		workerRepository.save(worker1);
+		workingHoursRepository.save(workingHoursOfWorker1);
+		workingHoursOfWorker1.setWorkerEntity(worker1);
 
 		workerRepository.save(worker2);
+		workingHoursRepository.save(workingHoursOfWorker2);
+		workingHoursOfWorker2.setWorkerEntity(worker2);
+
 		workerRepository.save(worker3);
+		workingHoursRepository.save(workingHoursOfWorker3);
+		workingHoursOfWorker3.setWorkerEntity(worker3);
 		*/
-
-		WorkingHoursEntity workingHoursOfworker1= new WorkingHoursEntity( 3.0 , 60.0 );
-		workingHoursOfworker1.setWorkerEntity(worker1);
-		workingHoursRepository.save(workingHoursOfworker1);
-
-		/*
-		WorkingHoursEntity workingHoursOfworker2= new WorkingHoursEntity( 2.0 , 90.0);
-		WorkingHoursEntity workingHoursOfworker3= new WorkingHoursEntity( 7.0 , 120.0);
-
-
-		workingHoursRepository.save(workingHoursOfworker2);
-		workingHoursRepository.save(workingHoursOfworker3);
-		*/
-
 
 	}
 

@@ -30,6 +30,17 @@ public class WorkingHoursController {
                 .body(workingHoursListOfAllWorkers);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<WorkingHoursEntity> getWorkingHoursById(@PathVariable("id") Long id){
+        System.out.println("get  workingHourslist of a worker by his/her worker id");
+        // get info from database
+        WorkingHoursEntity workingHoursOfAWorker = this.workingHoursService.findWorker(id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(workingHoursOfAWorker);
+    }
+
     /*
     @GetMapping("/hours")
     public ResponseEntity<Double> getTotalWorkingHoursOfAllWorkers() {

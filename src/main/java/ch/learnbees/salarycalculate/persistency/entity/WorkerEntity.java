@@ -19,10 +19,15 @@ public class WorkerEntity {
 
     public WorkerEntity() {}
 
-    public WorkerEntity(String firstname, String lastname, String type) {
+    public WorkerEntity(String firstname, String lastname, String type , WorkingHoursEntity workingHours) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.type = type;
+        this.workingHours = workingHours;
+    }
+
+    public WorkingHoursEntity getWorkingHours() {
+        return workingHours;
     }
 
     public Long getId() {
@@ -53,35 +58,7 @@ public class WorkerEntity {
         this.type = type;
     }
 
-    /*
-    public long getTotalWage() {
-        this.hours = hours;
-        this.weekNumber = weekNumber;
 
-        long totalWage = 0;
-
-        switch (this.type) {
-            case "lazyWorker":
-                totalWage = weekNumber * 23 * 20;
-                hours= 20L;
-                break;
-            case "childWorker":
-                totalWage = weekNumber * 10 * 30 ;
-                hours= 30L;
-                break;
-            case "goodWorker":
-                totalWage = weekNumber * 160;
-                hours= 40L;
-                break;
-            case "disabledWorker":
-                totalWage = weekNumber * 100;
-                hours= 10L;
-                break;
-        }
-        return totalWage;
-    }
-
- */
 
 
 }

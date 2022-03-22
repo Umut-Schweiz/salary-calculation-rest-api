@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface WorkerService {
 
-    WorkerEntity create(WorkerViewModel workerViewModel);
+    WorkerEntity create(WorkerEntity workerEntity);
 
     WorkerEntity findWorker(Long id);
 

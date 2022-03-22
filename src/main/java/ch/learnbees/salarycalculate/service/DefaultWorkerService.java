@@ -23,9 +23,9 @@ public class DefaultWorkerService implements WorkerService{
     }
 
     @Override
-    public WorkerEntity create(WorkerViewModel workerViewModel) {
+    public WorkerEntity create(WorkerEntity workerEntity) {
         return this.workerRepository
-                .save(new WorkerEntity(workerViewModel.getFirstname(), workerViewModel.getLastname(), workerViewModel.getType()));
+                .save(new WorkerEntity(workerEntity.getFirstname(), workerEntity.getLastname(), workerEntity.getType(), workerEntity.getWorkingHours()));
     }
 
     @Override

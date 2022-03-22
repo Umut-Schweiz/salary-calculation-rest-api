@@ -22,4 +22,6 @@ public interface WorkingHoursService {
      */
 
     List<WorkingHoursEntity> getListOfWorkingHoursAllWorkers();
+
+    WorkingHoursEntity findWorker(Long id);
 }

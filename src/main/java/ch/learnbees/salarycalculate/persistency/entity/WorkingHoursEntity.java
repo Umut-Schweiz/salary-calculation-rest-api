@@ -13,13 +13,13 @@ public class WorkingHoursEntity {
     private Double hours;
 
     @OneToOne
-    @JoinColumn(name = "worker_id", referencedColumnName = "id")
+    @JoinColumn(name = "worker_id")
     private WorkerEntity workerEntity;
 
     public WorkingHoursEntity() {
     }
 
-    public WorkingHoursEntity(Double weekNumber, Double hours) {
+    public WorkingHoursEntity(Double weekNumber, Double hours ) {
         this.weekNumber = weekNumber;
         this.hours = hours;
     }
