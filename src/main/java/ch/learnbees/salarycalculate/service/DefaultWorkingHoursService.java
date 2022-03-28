@@ -1,99 +1,54 @@
 package ch.learnbees.salarycalculate.service;
 
-import ch.learnbees.salarycalculate.controller.model.WorkingHoursViewModel;
-import ch.learnbees.salarycalculate.persistency.entity.WorkerEntity;
 import ch.learnbees.salarycalculate.persistency.entity.WorkingHoursEntity;
+import ch.learnbees.salarycalculate.persistency.exception.WorkingHoursNotFoundException;
 import ch.learnbees.salarycalculate.persistency.repository.WorkingHoursRepository;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class DefaultWorkingHoursService implements WorkingHoursService {
 
     private final WorkingHoursRepository workingHoursRepository;
-
     public DefaultWorkingHoursService(WorkingHoursRepository repository) {
         this.workingHoursRepository = repository;
     }
 
-
     @Override
-    public List<WorkingHoursEntity> getListOfWorkingHoursAllWorkers() {
-
-        return (List<WorkingHoursEntity>) this.workingHoursRepository.findAll();
+    public WorkingHoursEntity addWorkingHours(WorkingHoursEntity workingHours) {
+        return workingHoursRepository.save(workingHours);
     }
 
     @Override
-    public WorkingHoursEntity findWorker(Long id) {
-        return this.workingHoursRepository.findById(id).get();
-    }
-
-    /*
-    @Override
-    public Double getTotalWorkingHoursOfAllWorkers() {
-        return null;
+    public List<WorkingHoursEntity> getWorkingsHours() {
+        return StreamSupport
+                .stream(workingHoursRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Double totalWorkingHoursOfAWorker(Long id) {
-        Optional<WorkingHoursEntity> totalHoursOfAWorker = Optional.ofNullable(this.workingHoursRepository.findById(id).orElse(null));
-        return totalHoursOfAWorker.get().getHours();
+    public WorkingHoursEntity getWorkingHour(Long id) {
+        return workingHoursRepository.findById(id).orElseThrow(() ->
+                new WorkingHoursNotFoundException(id));
     }
 
     @Override
-    public WorkingHoursEntity create(WorkingHoursViewModel workingHoursViewModel) {
-        return this.workingHoursRepository
-                .save(new WorkingHoursEntity(workingHoursViewModel.getWeekNumber(),workingHoursViewModel.getHours()));
+    public WorkingHoursEntity deleteWorkingHour(Long id) {
+        WorkingHoursEntity workingHours = getWorkingHour(id);
+        workingHoursRepository.delete(workingHours);
+        return workingHours;
     }
 
+    @Transactional
     @Override
-    public Double getTotalWagesOfAllWorkers() {
-
-        Iterable<WorkingHoursEntity> totalWagesOfAllWorker = this.workingHoursRepository.findAll();
-        Double result = 0.0;
-
-        for(WorkingHoursEntity workingHours: totalWagesOfAllWorker){
-            result+=workingHours.getHours()*15*workingHours.getWeekNumber();
-        }
-        return result;
+    public WorkingHoursEntity updateWorkingHour(Long id, WorkingHoursEntity workingHours) {
+        WorkingHoursEntity workingHoursToUpdate = getWorkingHour(id);
+        workingHoursToUpdate.setWeekNumber(workingHours.getWeekNumber());
+        workingHoursToUpdate.setHours(workingHours.getHours());
+        return workingHoursToUpdate;
     }
-
-    @Override
-    public Double getTotalWagesOfAWorker(Long id) {
-        Optional<WorkingHoursEntity> totalWagesOfAWorker = Optional.ofNullable(this.workingHoursRepository.findById(id).orElse(null));
-        return totalWagesOfAWorker.get().getHours() * totalWagesOfAWorker.get().getWeekNumber() * 15;
-    }
-
-
-    public long getTotalWage() {
-        this.hours = hours;
-        this.weekNumber = weekNumber;
-
-        long totalWage = 0;
-
-        switch (this.type) {
-            case "lazyWorker":
-                totalWage = weekNumber * 23 * 20;
-                hours= 20L;
-                break;
-            case "childWorker":
-                totalWage = weekNumber * 10 * 30 ;
-                hours= 30L;
-                break;
-            case "goodWorker":
-                totalWage = weekNumber * 160;
-                hours= 40L;
-                break;
-            case "disabledWorker":
-                totalWage = weekNumber * 100;
-                hours= 10L;
-                break;
-        }
-        return totalWage;
-    }
-
-
-    */
 }

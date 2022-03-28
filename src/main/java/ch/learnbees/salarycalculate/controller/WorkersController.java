@@ -1,15 +1,15 @@
 package ch.learnbees.salarycalculate.controller;
 
-
-import ch.learnbees.salarycalculate.controller.model.WorkerViewModel;
+import ch.learnbees.salarycalculate.persistency.dto.WorkerDto;
 import ch.learnbees.salarycalculate.persistency.entity.WorkerEntity;
 import ch.learnbees.salarycalculate.service.WorkerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/workers")
@@ -17,71 +17,55 @@ public class WorkersController {
 
     private final WorkerService workerService;
 
+    @Autowired
     public WorkersController(WorkerService workerService) {
         this.workerService = workerService;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<WorkerEntity>> getListOfWorkers(){
-        System.out.println("get list of workers!");
-        // get info from service
-        List<WorkerEntity> workerEntityList = this.workerService.getListOfWorkers();
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(workerEntityList);
-        //.body(Arrays.asList(new WorkersViewModel("marc", "zuckerberg" , "good")));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<WorkerEntity> getWorkerById(@PathVariable("id") Long id){
-        System.out.println("get a worker by his/her id");
-        // get info from database
-        WorkerEntity existingWorkerEntity = this.workerService.findWorker(id);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(existingWorkerEntity);
-    }
-
     @PostMapping
-    public ResponseEntity createAWorker(@RequestBody WorkerEntity workerEntity){
-        System.out.println("create a new Worker" + workerEntity);
-        // save info into database
-        WorkerEntity newWorkerEntity = this.workerService.create(workerEntity);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(newWorkerEntity);
+    public ResponseEntity<WorkerDto> createWorker(@RequestBody final WorkerDto workerDto){
+        WorkerEntity worker = workerService.createWorker(WorkerEntity.from(workerDto));
+        return new ResponseEntity<>(WorkerDto.from(worker),HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity updateWorkerById(
-            @PathVariable("id") Long workerId,
-            @RequestBody WorkerViewModel workerViewModel
-    ){
-
-        WorkerEntity workerEntity = this.workerService.findWorker(workerId);
-        workerEntity.setFirstname(workerViewModel.getFirstname());
-        workerEntity.setLastname(workerViewModel.getLastname());
-        workerEntity.setType(workerViewModel.getType());
-
-        final WorkerEntity updatedWorker = workerService.save(workerEntity);
-
-        System.out.println("replace worker!");
-        // replace the entity in the database
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+    @GetMapping
+    public ResponseEntity<List<WorkerDto>> getWorkers(){
+        List<WorkerEntity> workerEntities = workerService.getWorkers();
+        List<WorkerDto> workerDtos = workerEntities.stream().map(WorkerDto::from).collect(Collectors.toList());
+        return new ResponseEntity<>(workerDtos,HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteWorkerById(@PathVariable("id") Long id){
-        System.out.println("delete worker!");
-        // delete entity via service from the database
-        this.workerService.deleteWorker(id);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+    @GetMapping(value = "{id}")
+    public ResponseEntity<WorkerDto> getWorker(@PathVariable final Long id){
+       WorkerEntity worker = workerService.getWorker(id);
+        return new ResponseEntity<>(WorkerDto.from(worker),HttpStatus.OK);
     }
+
+    @DeleteMapping(value = "{id}")
+    public ResponseEntity<WorkerDto> deleteWorker(@PathVariable final Long id){
+        WorkerEntity worker = workerService.deleteWorker(id);
+        return new ResponseEntity<>(WorkerDto.from(worker),HttpStatus.OK);
+    }
+
+    @PutMapping(value = "{id}")
+    public ResponseEntity<WorkerDto> updateWorker(@PathVariable final Long id,
+                                                  @RequestBody final WorkerDto workerDto){
+        WorkerEntity worker = workerService.updateWorker(id, WorkerEntity.from(workerDto));
+        return new ResponseEntity<>(WorkerDto.from(worker),HttpStatus.OK);
+    }
+
+    @PostMapping(value = "{workerId}/working-hours/{workingHourId}/add")
+    public ResponseEntity<WorkerDto> addWorkingHoursToWorker(@PathVariable final Long workerId,
+                                                             @PathVariable final Long workingHourId) {
+        WorkerEntity worker = workerService.addWorkingHoursToWorker(workerId, workingHourId);
+        return new ResponseEntity<>(WorkerDto.from(worker), HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "{workerId}/working-hours/{workingHourId}/remove")
+    public ResponseEntity<WorkerDto> removeWorkingHoursFromWorker(@PathVariable final Long workerId,
+                                                             @PathVariable final Long workingHourId) {
+        WorkerEntity worker = workerService.removeWorkingHoursFromWorker(workerId, workingHourId);
+        return new ResponseEntity<>(WorkerDto.from(worker), HttpStatus.OK);
+    }
+
 }

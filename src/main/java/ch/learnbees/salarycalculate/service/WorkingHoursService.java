@@ -1,6 +1,5 @@
 package ch.learnbees.salarycalculate.service;
 
-import ch.learnbees.salarycalculate.controller.model.WorkingHoursViewModel;
 import ch.learnbees.salarycalculate.persistency.entity.WorkerEntity;
 import ch.learnbees.salarycalculate.persistency.entity.WorkingHoursEntity;
 
@@ -8,20 +7,14 @@ import java.util.List;
 
 public interface WorkingHoursService {
 
-    /*
-    Double getTotalWorkingHoursOfAllWorkers();
+    WorkingHoursEntity addWorkingHours(WorkingHoursEntity workingHours);
 
-    Double totalWorkingHoursOfAWorker(Long id);
+    List<WorkingHoursEntity> getWorkingsHours();
 
-    WorkingHoursEntity create(WorkingHoursViewModel workingHoursViewModel);
+    WorkingHoursEntity getWorkingHour(Long id);
 
-    Double getTotalWagesOfAllWorkers();
+    WorkingHoursEntity deleteWorkingHour(Long id);
 
-    Double getTotalWagesOfAWorker(Long id);
+    WorkingHoursEntity updateWorkingHour(Long id, WorkingHoursEntity workingHours);
 
-     */
-
-    List<WorkingHoursEntity> getListOfWorkingHoursAllWorkers();
-
-    WorkingHoursEntity findWorker(Long id);
 }

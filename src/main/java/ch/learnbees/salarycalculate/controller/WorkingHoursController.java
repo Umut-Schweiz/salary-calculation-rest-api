@@ -1,139 +1,57 @@
 package ch.learnbees.salarycalculate.controller;
 
-import ch.learnbees.salarycalculate.persistency.entity.WorkerEntity;
+import ch.learnbees.salarycalculate.persistency.dto.WorkingHourDto;
 import ch.learnbees.salarycalculate.persistency.entity.WorkingHoursEntity;
 import ch.learnbees.salarycalculate.service.WorkingHoursService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/calculates")
+@RequestMapping("/working-hours")
 public class WorkingHoursController {
 
     private final WorkingHoursService workingHoursService;
 
+    @Autowired
     public WorkingHoursController(WorkingHoursService workingHoursService) {
         this.workingHoursService = workingHoursService;
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<WorkingHoursEntity>> getListOfWorkingHoursAllWorkers(){
-        System.out.println("get list of workers!");
-        // get info from service
-        List<WorkingHoursEntity> workingHoursListOfAllWorkers = this.workingHoursService.getListOfWorkingHoursAllWorkers();
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(workingHoursListOfAllWorkers);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<WorkingHoursEntity> getWorkingHoursById(@PathVariable("id") Long id){
-        System.out.println("get  workingHourslist of a worker by his/her worker id");
-        // get info from database
-        WorkingHoursEntity workingHoursOfAWorker = this.workingHoursService.findWorker(id);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(workingHoursOfAWorker);
-    }
-
-    /*
-    @GetMapping("/hours")
-    public ResponseEntity<Double> getTotalWorkingHoursOfAllWorkers() {
-        System.out.println("get  total working hours of all workers");
-        // get info from service
-        Double totalWorkingHoursOfWorkers = this.workingHoursService.getTotalWorkingHoursOfAllWorkers();
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(totalWorkingHoursOfWorkers);
-        //.body("567");
-    }
-
-    @GetMapping("/hours/{id}")
-    public ResponseEntity<Double> getTotalWorkingHoursOfAWorker(@PathVariable("worker_id") Long id) {
-        System.out.println("get total working hours of a worker his/her id");
-        // get info from database
-
-        Double totalWorkingHoursOfAWorker = this.workingHoursService.totalWorkingHoursOfAWorker(id);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(totalWorkingHoursOfAWorker);
-    }
-
-    @GetMapping("/wages")
-    public ResponseEntity<Double> getTotalWagesOfAllWorkers() {
-        System.out.println("get  total wages of all workers");
-        // get info from service
-        Double totalWagesOfAllWorkers = this.workingHoursService.getTotalWagesOfAllWorkers();
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(totalWagesOfAllWorkers);
-        //.body("567");
-    }
-
-    @GetMapping("/wages/{id}")
-    public ResponseEntity<Double> getTotalWagesOfAWorker(@PathVariable("worker_id") Long id) {
-        System.out.println("get total wages of a worker his/her id");
-        // get info from database
-
-        Double totalWagesOfAWorker = this.workingHoursService.getTotalWagesOfAWorker(id);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(totalWagesOfAWorker);
-    }
-    /*
-    @PutMapping("/{id}")
-    public ResponseEntity updateWorkerById(
-            @PathVariable("id") Long workerId,
-            @RequestBody WorkerViewModel workerViewModel
-    ) {
-
-        WorkerEntity workerEntity = this.workerService.findWorker(workerId);
-        workerEntity.setFirstname(workerViewModel.getFirstname());
-        workerEntity.setLastname(workerViewModel.getLastname());
-        workerEntity.setType(workerViewModel.getType());
-
-        final WorkerEntity updatedWorker = workerService.save(workerEntity);
-
-        System.out.println("replace worker!");
-        // replace the entity in the database
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
-    }
-
-
-    /*
     @PostMapping
-    public ResponseEntity createWorkingHoursOfAWorker(@RequestBody WorkingHoursViewModel workingHoursViewModel) {
-        System.out.println("create working hours of a worker" + workingHoursViewModel);
-        // save info into database
-        WorkingHoursEntity createdWorkingHoursEntity = this.workingHoursService.create(workingHoursViewModel);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(createdWorkingHoursEntity);
+    public ResponseEntity<WorkingHourDto> addWorkingHour(@RequestBody final WorkingHourDto workingHourDto) {
+        //dto => Date Transfer Object
+        WorkingHoursEntity workingHours = workingHoursService.addWorkingHours(WorkingHoursEntity.from(workingHourDto));
+        return new ResponseEntity<>(WorkingHourDto.from(workingHours),HttpStatus.OK);
     }
 
-
-
-
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteWorkerById(@PathVariable("id") Long id) {
-        System.out.println("delete worker!");
-        // delete entity via service from the database
-        this.workerService.deleteWorker(id);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+    @GetMapping
+    public ResponseEntity<List<WorkingHourDto>> getWorkingHours(){
+        List<WorkingHoursEntity> workingHoursEntities = workingHoursService.getWorkingsHours();
+        List<WorkingHourDto> workingHoursDto = workingHoursEntities.stream().map(WorkingHourDto::from).collect(Collectors.toList());
+        return new ResponseEntity<>(workingHoursDto,HttpStatus.OK);
     }
- */
+
+    @GetMapping(value = "{id}")
+    public ResponseEntity<WorkingHourDto> getWorkingHour(@PathVariable final Long id) {
+        WorkingHoursEntity workingHours = workingHoursService.getWorkingHour(id);
+        return new ResponseEntity<>(WorkingHourDto.from(workingHours),HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = "{id}")
+    public ResponseEntity<WorkingHourDto> deleteWorkingHour(@PathVariable final Long id) {
+        WorkingHoursEntity workingHours = workingHoursService.deleteWorkingHour(id);
+        return new ResponseEntity<>(WorkingHourDto.from(workingHours),HttpStatus.OK);
+    }
+
+    @PutMapping(value = "{id}")
+    public ResponseEntity<WorkingHourDto> updateWorkingHour(@PathVariable final Long id,
+                                                            @RequestBody final WorkingHourDto workingHourDto) {
+        WorkingHoursEntity updatedWorkingHour = workingHoursService.updateWorkingHour(id, WorkingHoursEntity.from(workingHourDto));
+        return new ResponseEntity<>(WorkingHourDto.from(updatedWorkingHour),HttpStatus.OK);
+    }
+
 }
